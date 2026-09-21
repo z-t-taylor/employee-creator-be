@@ -1,0 +1,817 @@
+{
+  "/Users/zoetaylor/Documents/nology-training/employee-creator-project/employee-creator-be/serverless.yml": {
+    "versionFramework": "4.42.0",
+    "servicePath": "/Users/zoetaylor/Documents/nology-training/employee-creator-project/employee-creator-be/serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "employee-creator",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs24.x",
+        "architecture": "arm64",
+        "region": "ap-southeast-2",
+        "role": "arn:aws:iam::656446902817:role/employee_creator",
+        "stage": "dev",
+        "versionFunctions": true,
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "CreateEmployeeLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/employee-creator-dev-createEmployee"
+              }
+            },
+            "CreateEmployeeLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
+                  "S3Key": "serverless/employee-creator/dev/1790019138288-2026-09-21T19:32:18.288Z/employee-creator.zip"
+                },
+                "Handler": "src/handlers/createEmployee.handler",
+                "Runtime": "nodejs24.x",
+                "FunctionName": "employee-creator-dev-createEmployee",
+                "MemorySize": 1024,
+                "Timeout": 6,
+                "Architectures": [
+                  "arm64"
+                ],
+                "Environment": {
+                  "Variables": {
+                    "NODE_OPTIONS": "--enable-source-maps"
+                  }
+                },
+                "Role": "arn:aws:iam::656446902817:role/employee_creator"
+              },
+              "DependsOn": [
+                "CreateEmployeeLogGroup"
+              ]
+            },
+            "CreateEmployeeLambdaVersionAv32x4m6U2dP8ljIv1xbLHWbkSsGHYqizDZ3IPPo": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "CreateEmployeeLambdaFunction"
+                },
+                "CodeSha256": "2Bvc4mHFHDC+9msXQ1Eo3Odphh+ywjkUgpK/nrcPrZ4="
+              }
+            },
+            "ApiGatewayRestApi": {
+              "Type": "AWS::ApiGateway::RestApi",
+              "Properties": {
+                "Name": "dev-employee-creator",
+                "EndpointConfiguration": {
+                  "Types": [
+                    "EDGE"
+                  ]
+                },
+                "Policy": ""
+              }
+            },
+            "ApiGatewayResourceEmployees": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Fn::GetAtt": [
+                    "ApiGatewayRestApi",
+                    "RootResourceId"
+                  ]
+                },
+                "PathPart": "employees",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayMethodEmployeesPost": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "POST",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceEmployees"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "CreateEmployeeLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "CreateEmployeeLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayDeployment1790019125694": {
+              "Type": "AWS::ApiGateway::Deployment",
+              "Properties": {
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "StageName": "dev"
+              },
+              "DependsOn": [
+                "ApiGatewayMethodEmployeesPost"
+              ]
+            },
+            "CreateEmployeeLambdaPermissionApiGateway": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "CreateEmployeeLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "/*/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "EmployeesTable": {
+              "Type": "AWS::DynamoDB::Table",
+              "Properties": {
+                "TableName": "employees",
+                "BillingMode": "PAY_PER_REQUEST",
+                "AttributeDefinitions": [
+                  {
+                    "AttributeName": "employeeId",
+                    "AttributeType": "S"
+                  }
+                ],
+                "KeySchema": [
+                  {
+                    "AttributeName": "employeeId",
+                    "KeyType": "HASH"
+                  }
+                ]
+              }
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
+              "Export": {
+                "Name": "sls-employee-creator-dev-ServerlessDeploymentBucketName"
+              }
+            },
+            "CreateEmployeeLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "CreateEmployeeLambdaVersionAv32x4m6U2dP8ljIv1xbLHWbkSsGHYqizDZ3IPPo"
+              },
+              "Export": {
+                "Name": "sls-employee-creator-dev-CreateEmployeeLambdaFunctionQualifiedArn"
+              }
+            },
+            "ServiceEndpoint": {
+              "Description": "URL of the service endpoint",
+              "Value": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "https://",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    ".execute-api.",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ".",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    },
+                    "/dev"
+                  ]
+                ]
+              },
+              "Export": {
+                "Name": "sls-employee-creator-dev-ServiceEndpoint"
+              }
+            }
+          }
+        },
+        "vpc": {}
+      },
+      "functions": {
+        "createEmployee": {
+          "handler": "src/handlers/createEmployee.handler",
+          "events": [
+            {
+              "http": {
+                "path": "employees",
+                "method": "post",
+                "integration": "AWS_PROXY"
+              }
+            }
+          ],
+          "name": "employee-creator-dev-createEmployee",
+          "environment": {
+            "NODE_OPTIONS": "--enable-source-maps"
+          },
+          "package": {},
+          "memory": 1024,
+          "timeout": 6,
+          "runtime": "nodejs24.x",
+          "vpc": {},
+          "versionLogicalId": "CreateEmployeeLambdaVersionAv32x4m6U2dP8ljIv1xbLHWbkSsGHYqizDZ3IPPo"
+        }
+      },
+      "resources": {
+        "Resources": {
+          "EmployeesTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+              "TableName": "employees",
+              "BillingMode": "PAY_PER_REQUEST",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "employeeId",
+                  "AttributeType": "S"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "employeeId",
+                  "KeyType": "HASH"
+                }
+              ]
+            }
+          }
+        },
+        "Outputs": {}
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "nodejs24.x",
+      "architecture": "arm64",
+      "region": "ap-southeast-2",
+      "role": "arn:aws:iam::656446902817:role/employee_creator",
+      "stage": "dev",
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "CreateEmployeeLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/employee-creator-dev-createEmployee"
+            }
+          },
+          "CreateEmployeeLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
+                "S3Key": "serverless/employee-creator/dev/1790019138288-2026-09-21T19:32:18.288Z/employee-creator.zip"
+              },
+              "Handler": "src/handlers/createEmployee.handler",
+              "Runtime": "nodejs24.x",
+              "FunctionName": "employee-creator-dev-createEmployee",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Architectures": [
+                "arm64"
+              ],
+              "Environment": {
+                "Variables": {
+                  "NODE_OPTIONS": "--enable-source-maps"
+                }
+              },
+              "Role": "arn:aws:iam::656446902817:role/employee_creator"
+            },
+            "DependsOn": [
+              "CreateEmployeeLogGroup"
+            ]
+          },
+          "CreateEmployeeLambdaVersionAv32x4m6U2dP8ljIv1xbLHWbkSsGHYqizDZ3IPPo": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CreateEmployeeLambdaFunction"
+              },
+              "CodeSha256": "2Bvc4mHFHDC+9msXQ1Eo3Odphh+ywjkUgpK/nrcPrZ4="
+            }
+          },
+          "ApiGatewayRestApi": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+              "Name": "dev-employee-creator",
+              "EndpointConfiguration": {
+                "Types": [
+                  "EDGE"
+                ]
+              },
+              "Policy": ""
+            }
+          },
+          "ApiGatewayResourceEmployees": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "employees",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodEmployeesPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceEmployees"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": "<REDACTED>",
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "CreateEmployeeLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "CreateEmployeeLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayDeployment1790019125694": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "dev"
+            },
+            "DependsOn": [
+              "ApiGatewayMethodEmployeesPost"
+            ]
+          },
+          "CreateEmployeeLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CreateEmployeeLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "EmployeesTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+              "TableName": "employees",
+              "BillingMode": "PAY_PER_REQUEST",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "employeeId",
+                  "AttributeType": "S"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "employeeId",
+                  "KeyType": "HASH"
+                }
+              ]
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
+            "Export": {
+              "Name": "sls-employee-creator-dev-ServerlessDeploymentBucketName"
+            }
+          },
+          "CreateEmployeeLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CreateEmployeeLambdaVersionAv32x4m6U2dP8ljIv1xbLHWbkSsGHYqizDZ3IPPo"
+            },
+            "Export": {
+              "Name": "sls-employee-creator-dev-CreateEmployeeLambdaFunctionQualifiedArn"
+            }
+          },
+          "ServiceEndpoint": {
+            "Description": "URL of the service endpoint",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/dev"
+                ]
+              ]
+            },
+            "Export": {
+              "Name": "sls-employee-creator-dev-ServiceEndpoint"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "serviceRawFile": "service: employee-creator\n\nprovider:\n  name: aws\n  runtime: nodejs24.x\n  architecture: arm64\n  region: ap-southeast-2\n  role: arn:aws:iam::${aws:accountId}:role/employee_creator\n\nfunctions:\n  createEmployee:\n    handler: src/handlers/createEmployee.handler\n    events:\n      - http:\n          path: /employees\n          method: POST\n\nresources:\n  Resources:\n    EmployeesTable:\n      Type: AWS::DynamoDB::Table\n      Properties:\n        TableName: employees\n        BillingMode: PAY_PER_REQUEST\n        AttributeDefinitions:\n          - AttributeName: employeeId\n            AttributeType: S\n        KeySchema:\n          - AttributeName: employeeId\n            KeyType: HASH\n",
+    "command": [
+      "deploy"
+    ],
+    "options": {},
+    "orgId": "9d89d5ea-8df9-4bd3-beef-be84532340ac",
+    "orgName": "zoetaylor31090",
+    "userId": "SLchJ1Tjs8pVt43zPQ",
+    "userName": "zoe.taylor31090",
+    "serviceProviderAwsAccountId": "656446902817",
+    "serviceProviderAwsCfStackName": "employee-creator-dev",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-southeast-2:656446902817:stack/employee-creator-dev/30950930-b5f3-11f1-b234-0a4163fa6ff3",
+    "serviceProviderAwsCfStackCreated": "2026-09-21T19:32:32.282Z",
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "CreateEmployeeLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-southeast-2:656446902817:function:employee-creator-dev-createEmployee:1",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-employee-creator-dev-CreateEmployeeLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "ServiceEndpoint",
+        "OutputValue": "https://a3juojx8f5.execute-api.ap-southeast-2.amazonaws.com/dev",
+        "Description": "URL of the service endpoint",
+        "ExportName": "sls-employee-creator-dev-ServiceEndpoint"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
+        "ExportName": "sls-employee-creator-dev-ServerlessDeploymentBucketName"
+      }
+    ],
+    "compiledCloudFormationTemplate": {
+      "AWSTemplateFormatVersion": "2010-09-09",
+      "Description": "The AWS CloudFormation template for this Serverless application",
+      "Resources": {
+        "CreateEmployeeLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/employee-creator-dev-createEmployee"
+          }
+        },
+        "CreateEmployeeLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
+              "S3Key": "serverless/employee-creator/dev/1790019138288-2026-09-21T19:32:18.288Z/employee-creator.zip"
+            },
+            "Handler": "src/handlers/createEmployee.handler",
+            "Runtime": "nodejs24.x",
+            "FunctionName": "employee-creator-dev-createEmployee",
+            "MemorySize": 1024,
+            "Timeout": 6,
+            "Architectures": [
+              "arm64"
+            ],
+            "Environment": {
+              "Variables": {
+                "NODE_OPTIONS": "--enable-source-maps"
+              }
+            },
+            "Role": "arn:aws:iam::656446902817:role/employee_creator"
+          },
+          "DependsOn": [
+            "CreateEmployeeLogGroup"
+          ]
+        },
+        "CreateEmployeeLambdaVersionAv32x4m6U2dP8ljIv1xbLHWbkSsGHYqizDZ3IPPo": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "CreateEmployeeLambdaFunction"
+            },
+            "CodeSha256": "2Bvc4mHFHDC+9msXQ1Eo3Odphh+ywjkUgpK/nrcPrZ4="
+          }
+        },
+        "ApiGatewayRestApi": {
+          "Type": "AWS::ApiGateway::RestApi",
+          "Properties": {
+            "Name": "dev-employee-creator",
+            "EndpointConfiguration": {
+              "Types": [
+                "EDGE"
+              ]
+            },
+            "Policy": ""
+          }
+        },
+        "ApiGatewayResourceEmployees": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+            "ParentId": {
+              "Fn::GetAtt": [
+                "ApiGatewayRestApi",
+                "RootResourceId"
+              ]
+            },
+            "PathPart": "employees",
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            }
+          }
+        },
+        "ApiGatewayMethodEmployeesPost": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+            "HttpMethod": "POST",
+            "RequestParameters": {},
+            "ResourceId": {
+              "Ref": "ApiGatewayResourceEmployees"
+            },
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "ApiKeyRequired": "<REDACTED>",
+            "AuthorizationType": "NONE",
+            "Integration": {
+              "IntegrationHttpMethod": "POST",
+              "Type": "AWS_PROXY",
+              "Uri": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":apigateway:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":lambda:path/2015-03-31/functions/",
+                    {
+                      "Fn::GetAtt": [
+                        "CreateEmployeeLambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "/invocations"
+                  ]
+                ]
+              }
+            },
+            "MethodResponses": []
+          },
+          "DependsOn": [
+            "CreateEmployeeLambdaPermissionApiGateway"
+          ]
+        },
+        "ApiGatewayDeployment1790019125694": {
+          "Type": "AWS::ApiGateway::Deployment",
+          "Properties": {
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "StageName": "dev"
+          },
+          "DependsOn": [
+            "ApiGatewayMethodEmployeesPost"
+          ]
+        },
+        "CreateEmployeeLambdaPermissionApiGateway": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "CreateEmployeeLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  "/*/*"
+                ]
+              ]
+            }
+          }
+        },
+        "EmployeesTable": {
+          "Type": "AWS::DynamoDB::Table",
+          "Properties": {
+            "TableName": "employees",
+            "BillingMode": "PAY_PER_REQUEST",
+            "AttributeDefinitions": [
+              {
+                "AttributeName": "employeeId",
+                "AttributeType": "S"
+              }
+            ],
+            "KeySchema": [
+              {
+                "AttributeName": "employeeId",
+                "KeyType": "HASH"
+              }
+            ]
+          }
+        }
+      },
+      "Outputs": {
+        "ServerlessDeploymentBucketName": {
+          "Value": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
+          "Export": {
+            "Name": "sls-employee-creator-dev-ServerlessDeploymentBucketName"
+          }
+        },
+        "CreateEmployeeLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "CreateEmployeeLambdaVersionAv32x4m6U2dP8ljIv1xbLHWbkSsGHYqizDZ3IPPo"
+          },
+          "Export": {
+            "Name": "sls-employee-creator-dev-CreateEmployeeLambdaFunctionQualifiedArn"
+          }
+        },
+        "ServiceEndpoint": {
+          "Description": "URL of the service endpoint",
+          "Value": {
+            "Fn::Join": [
+              "",
+              [
+                "https://",
+                {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                ".execute-api.",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ".",
+                {
+                  "Ref": "AWS::URLSuffix"
+                },
+                "/dev"
+              ]
+            ]
+          },
+          "Export": {
+            "Name": "sls-employee-creator-dev-ServiceEndpoint"
+          }
+        }
+      }
+    }
+  }
+}

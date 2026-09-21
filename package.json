@@ -1,0 +1,24 @@
+{
+  "name": "employee-creator-be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.163",
+    "@types/node": "^26.6.1",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1132.0",
+    "@aws-sdk/lib-dynamodb": "^3.1132.0",
+    "@aws-sdk/util-dynamodb": "^3.996.9"
+  }
+}
