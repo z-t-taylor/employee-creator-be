@@ -28,12 +28,18 @@
               "LogGroupName": "/aws/lambda/employee-creator-dev-viewAllEmployees"
             }
           },
+          "ViewEmployeeByIdLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/employee-creator-dev-viewEmployeeById"
+            }
+          },
           "CreateEmployeeLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
-                "S3Key": "serverless/employee-creator/dev/1790075742678-2026-09-22T11:15:42.678Z/employee-creator.zip"
+                "S3Key": "serverless/employee-creator/dev/1790088729293-2026-09-22T14:52:09.293Z/employee-creator.zip"
               },
               "Handler": "src/handlers/createEmployee.handler",
               "Runtime": "nodejs24.x",
@@ -59,7 +65,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
-                "S3Key": "serverless/employee-creator/dev/1790075742678-2026-09-22T11:15:42.678Z/employee-creator.zip"
+                "S3Key": "serverless/employee-creator/dev/1790088729293-2026-09-22T14:52:09.293Z/employee-creator.zip"
               },
               "Handler": "src/handlers/viewAllEmployees.handler",
               "Runtime": "nodejs24.x",
@@ -80,24 +86,60 @@
               "ViewAllEmployeesLogGroup"
             ]
           },
-          "CreateEmployeeLambdaVersion12E69To1WEC0WsFRZeGHrE96ldYl6XhQtWIAQ1klI": {
+          "ViewEmployeeByIdLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
+                "S3Key": "serverless/employee-creator/dev/1790088729293-2026-09-22T14:52:09.293Z/employee-creator.zip"
+              },
+              "Handler": "src/handlers/viewEmployeeById.handler",
+              "Runtime": "nodejs24.x",
+              "FunctionName": "employee-creator-dev-viewEmployeeById",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Architectures": [
+                "arm64"
+              ],
+              "Environment": {
+                "Variables": {
+                  "NODE_OPTIONS": "--enable-source-maps"
+                }
+              },
+              "Role": "arn:aws:iam::656446902817:role/employee_creator"
+            },
+            "DependsOn": [
+              "ViewEmployeeByIdLogGroup"
+            ]
+          },
+          "CreateEmployeeLambdaVersionjMF2DTgS6Z4KoOpnYaaTUkG9cJSdkSTtHIS8Iwtyj4o": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateEmployeeLambdaFunction"
               },
-              "CodeSha256": "BdwNaE0HfeGUr/dl9W4SaRpgTzip43Z6fEkGzBXycSo="
+              "CodeSha256": "EqG1YnJKs0cWtH/etSy7bVTfuVLg6J5tRWzcvzFqMCA="
             }
           },
-          "ViewAllEmployeesLambdaVersion7C67JRcb8azQLAm5j8k0686CryZfkrxsUt8EKYsYA": {
+          "ViewEmployeeByIdLambdaVersiondwyWWtzuDhlFurlCkasHw5Lx79U84oYhn4tRjp6i0": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ViewEmployeeByIdLambdaFunction"
+              },
+              "CodeSha256": "EqG1YnJKs0cWtH/etSy7bVTfuVLg6J5tRWzcvzFqMCA="
+            }
+          },
+          "ViewAllEmployeesLambdaVersionCcqmFmNZrkWVKcD8uqiD4jSVPc03BEPJAD9lJSkK9E": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ViewAllEmployeesLambdaFunction"
               },
-              "CodeSha256": "BdwNaE0HfeGUr/dl9W4SaRpgTzip43Z6fEkGzBXycSo="
+              "CodeSha256": "EqG1YnJKs0cWtH/etSy7bVTfuVLg6J5tRWzcvzFqMCA="
             }
           },
           "ApiGatewayRestApi": {
@@ -122,6 +164,18 @@
                 ]
               },
               "PathPart": "employees",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceEmployeesEmployeeidVar": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceEmployees"
+              },
+              "PathPart": "{employeeId}",
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
@@ -219,7 +273,70 @@
               "ViewAllEmployeesLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1790075730688": {
+          "ApiGatewayMethodEmployeesEmployeeidVarGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {
+                "method.request.path.employeeId": true
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceEmployeesEmployeeidVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "ViewEmployeeByIdLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                },
+                "RequestParameters": {}
+              },
+              "MethodResponses": [],
+              "RequestValidatorId": {
+                "Ref": "ApiGatewayEmployeecreatorRequestValidator"
+              }
+            },
+            "DependsOn": [
+              "ViewEmployeeByIdLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayEmployeecreatorRequestValidator": {
+            "Type": "AWS::ApiGateway::RequestValidator",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ValidateRequestBody": true,
+              "ValidateRequestParameters": true,
+              "Name": "employee-creator-dev | Validate request body and querystring parameters"
+            }
+          },
+          "ApiGatewayDeployment1790088719119": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -229,7 +346,8 @@
             },
             "DependsOn": [
               "ApiGatewayMethodEmployeesPost",
-              "ApiGatewayMethodEmployeesGet"
+              "ApiGatewayMethodEmployeesGet",
+              "ApiGatewayMethodEmployeesEmployeeidVarGet"
             ]
           },
           "CreateEmployeeLambdaPermissionApiGateway": {
@@ -306,6 +424,43 @@
               }
             }
           },
+          "ViewEmployeeByIdLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ViewEmployeeByIdLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
           "EmployeesTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
@@ -336,16 +491,25 @@
           "CreateEmployeeLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateEmployeeLambdaVersion12E69To1WEC0WsFRZeGHrE96ldYl6XhQtWIAQ1klI"
+              "Ref": "CreateEmployeeLambdaVersionjMF2DTgS6Z4KoOpnYaaTUkG9cJSdkSTtHIS8Iwtyj4o"
             },
             "Export": {
               "Name": "sls-employee-creator-dev-CreateEmployeeLambdaFunctionQualifiedArn"
             }
           },
+          "ViewEmployeeByIdLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ViewEmployeeByIdLambdaVersiondwyWWtzuDhlFurlCkasHw5Lx79U84oYhn4tRjp6i0"
+            },
+            "Export": {
+              "Name": "sls-employee-creator-dev-ViewEmployeeByIdLambdaFunctionQualifiedArn"
+            }
+          },
           "ViewAllEmployeesLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ViewAllEmployeesLambdaVersion7C67JRcb8azQLAm5j8k0686CryZfkrxsUt8EKYsYA"
+              "Ref": "ViewAllEmployeesLambdaVersionCcqmFmNZrkWVKcD8uqiD4jSVPc03BEPJAD9lJSkK9E"
             },
             "Export": {
               "Name": "sls-employee-creator-dev-ViewAllEmployeesLambdaFunctionQualifiedArn"
@@ -403,7 +567,7 @@
         "timeout": 6,
         "runtime": "nodejs24.x",
         "vpc": {},
-        "versionLogicalId": "CreateEmployeeLambdaVersion12E69To1WEC0WsFRZeGHrE96ldYl6XhQtWIAQ1klI"
+        "versionLogicalId": "CreateEmployeeLambdaVersionjMF2DTgS6Z4KoOpnYaaTUkG9cJSdkSTtHIS8Iwtyj4o"
       },
       "viewAllEmployees": {
         "handler": "src/handlers/viewAllEmployees.handler",
@@ -425,7 +589,34 @@
         "timeout": 6,
         "runtime": "nodejs24.x",
         "vpc": {},
-        "versionLogicalId": "ViewAllEmployeesLambdaVersion7C67JRcb8azQLAm5j8k0686CryZfkrxsUt8EKYsYA"
+        "versionLogicalId": "ViewAllEmployeesLambdaVersionCcqmFmNZrkWVKcD8uqiD4jSVPc03BEPJAD9lJSkK9E"
+      },
+      "viewEmployeeById": {
+        "handler": "src/handlers/viewEmployeeById.handler",
+        "events": [
+          {
+            "http": {
+              "path": "employees/{employeeId}",
+              "method": "get",
+              "request": {
+                "parameters": {
+                  "method.request.path.employeeId": true
+                }
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "employee-creator-dev-viewEmployeeById",
+        "environment": {
+          "NODE_OPTIONS": "--enable-source-maps"
+        },
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs24.x",
+        "vpc": {},
+        "versionLogicalId": "ViewEmployeeByIdLambdaVersiondwyWWtzuDhlFurlCkasHw5Lx79U84oYhn4tRjp6i0"
       }
     },
     "resources": {
@@ -471,7 +662,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/employee-creator/dev/1790075742678-2026-09-22T11:15:42.678Z",
+    "artifactDirectoryName": "serverless/employee-creator/dev/1790088729293-2026-09-22T14:52:09.293Z",
     "artifact": "employee-creator.zip"
   }
 }

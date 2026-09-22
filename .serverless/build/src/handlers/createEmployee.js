@@ -68,7 +68,7 @@ var handler = async (event) => {
   } catch (err) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: "Something went wrong.." })
+      body: JSON.stringify({ message: "Something went wrong..", err })
     };
   }
 };

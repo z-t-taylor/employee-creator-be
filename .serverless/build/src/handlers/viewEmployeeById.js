@@ -17,12 +17,12 @@ var __copyProps = (to, from, except, desc) => {
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// src/handlers/viewAllEmployees.ts
-var viewAllEmployees_exports = {};
-__export(viewAllEmployees_exports, {
+// src/handlers/viewEmployeeById.ts
+var viewEmployeeById_exports = {};
+__export(viewEmployeeById_exports, {
   handler: () => handler
 });
-module.exports = __toCommonJS(viewAllEmployees_exports);
+module.exports = __toCommonJS(viewEmployeeById_exports);
 var import_client_dynamodb = require("@aws-sdk/client-dynamodb");
 var import_lib_dynamodb = require("@aws-sdk/lib-dynamodb");
 var tableName = "employees";
@@ -30,11 +30,26 @@ var client = new import_client_dynamodb.DynamoDBClient({});
 var dynamo = import_lib_dynamodb.DynamoDBDocumentClient.from(client);
 var handler = async (event) => {
   try {
-    const getRes = await dynamo.send(new import_lib_dynamodb.ScanCommand({ TableName: tableName }));
-    const employees = getRes.Items ?? [];
+    const employeeId = event.pathParameters?.employeeId;
+    if (!employeeId) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: "Missing employee ID" })
+      };
+    }
+    const getRes = await dynamo.send(
+      new import_lib_dynamodb.GetCommand({ TableName: tableName, Key: { employeeId } })
+    );
+    const employee = getRes.Item ?? void 0;
+    if (employee === void 0) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: "Employee not found" })
+      };
+    }
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: "Employees retrieved", data: employees })
+      body: JSON.stringify({ message: "Employee found", data: employee })
     };
   } catch (err) {
     return {
@@ -47,4 +62,4 @@ var handler = async (event) => {
 0 && (module.exports = {
   handler
 });
-//# sourceMappingURL=viewAllEmployees.js.map
+//# sourceMappingURL=viewEmployeeById.js.map

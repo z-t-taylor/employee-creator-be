@@ -20,6 +20,16 @@ functions:
       - http:
           path: /employees
           method: GET
+  viewEmployeeById:
+    handler: src/handlers/viewEmployeeById.handler
+    events:
+      - http:
+          path: /employees/{employeeId}
+          method: GET
+          request:
+            parameters:
+              paths:
+                employeeId: true
 
 resources:
   Resources:
