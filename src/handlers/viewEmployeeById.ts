@@ -24,7 +24,7 @@ export const handler = async (
       new GetCommand({ TableName: tableName, Key: { employeeId } }),
     );
 
-    const employee: Employee = (getRes.Item as Employee) ?? undefined;
+    const employee = getRes.Item as Employee | undefined;
 
     if (employee === undefined) {
       return {
