@@ -30,6 +30,16 @@ functions:
             parameters:
               paths:
                 employeeId: true
+  updateEmployee:
+    handler: src/handlers/updateEmployee.handler
+    events:
+      - http:
+          path: /employees/{employeeId}
+          method: PUT
+          request:
+            parameters:
+              paths:
+                employeeId: true
 
 resources:
   Resources:

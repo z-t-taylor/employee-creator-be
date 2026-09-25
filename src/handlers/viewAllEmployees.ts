@@ -20,9 +20,10 @@ export const handler = async (
       body: JSON.stringify({ message: "Employees retrieved", data: employees }),
     };
   } catch (err) {
+    console.error("Error: ", err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: "Something went wrong..", err }),
+      body: JSON.stringify({ message: "Something went wrong.." }),
     };
   }
 };

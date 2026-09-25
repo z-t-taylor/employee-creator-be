@@ -53,9 +53,10 @@ export const handler = async (
       body: JSON.stringify({ message: "New employee created", data: employee }),
     };
   } catch (err) {
+    console.error("Error: ", err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: "Something went wrong..", err }),
+      body: JSON.stringify({ message: "Something went wrong.." }),
     };
   }
 };

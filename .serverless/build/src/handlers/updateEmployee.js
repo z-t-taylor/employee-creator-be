@@ -17,12 +17,12 @@ var __copyProps = (to, from, except, desc) => {
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// src/handlers/viewEmployeeById.ts
-var viewEmployeeById_exports = {};
-__export(viewEmployeeById_exports, {
+// src/handlers/updateEmployee.ts
+var updateEmployee_exports = {};
+__export(updateEmployee_exports, {
   handler: () => handler
 });
-module.exports = __toCommonJS(viewEmployeeById_exports);
+module.exports = __toCommonJS(updateEmployee_exports);
 var import_client_dynamodb = require("@aws-sdk/client-dynamodb");
 var import_lib_dynamodb = require("@aws-sdk/lib-dynamodb");
 var tableName = "employees";
@@ -47,9 +47,57 @@ var handler = async (event) => {
         body: JSON.stringify({ message: "Employee not found" })
       };
     }
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: "Missing request body" })
+      };
+    }
+    const allowedFields = [
+      "firstName",
+      "lastName",
+      "email",
+      "jobTitle",
+      "department"
+    ];
+    const updateData = {};
+    const employleeChanges = JSON.parse(event.body);
+    for (const field of allowedFields) {
+      if (employleeChanges[field] !== void 0) {
+        updateData[field] = employleeChanges[field];
+      }
+    }
+    updateData.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+    let updateExpression = "SET ";
+    const expressionAttributeNames = {};
+    const expressionAttributeValues = {};
+    Object.keys(updateData).forEach((key, index) => {
+      const attributeName = `#attr${index + 1}`;
+      const attributeValue = `:val${index + 1}`;
+      updateExpression += `${attributeName} = ${attributeValue}, `;
+      expressionAttributeNames[attributeName] = key;
+      expressionAttributeValues[attributeValue] = updateData[key];
+    });
+    updateExpression = updateExpression.slice(0, -2);
+    await dynamo.send(
+      new import_lib_dynamodb.UpdateCommand({
+        TableName: tableName,
+        Key: { employeeId },
+        UpdateExpression: updateExpression,
+        ExpressionAttributeNames: expressionAttributeNames,
+        ExpressionAttributeValues: expressionAttributeValues
+      })
+    );
+    const updatedRes = await dynamo.send(
+      new import_lib_dynamodb.GetCommand({ TableName: tableName, Key: { employeeId } })
+    );
+    const updatedEmployee = updatedRes.Item;
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: "Employee found", data: employee })
+      body: JSON.stringify({
+        message: "Employee details updated",
+        data: updatedEmployee
+      })
     };
   } catch (err) {
     console.error("Error: ", err);
@@ -63,4 +111,4 @@ var handler = async (event) => {
 0 && (module.exports = {
   handler
 });
-//# sourceMappingURL=viewEmployeeById.js.map
+//# sourceMappingURL=updateEmployee.js.map

@@ -26,7 +26,7 @@ export const handler = async (
 
     const employee = getRes.Item as Employee | undefined;
 
-    if (employee === undefined) {
+    if (!employee) {
       return {
         statusCode: 404,
         body: JSON.stringify({ message: "Employee not found" }),
@@ -38,9 +38,10 @@ export const handler = async (
       body: JSON.stringify({ message: "Employee found", data: employee }),
     };
   } catch (err) {
+    console.error("Error: ", err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: "Something went wrong..", err }),
+      body: JSON.stringify({ message: "Something went wrong.." }),
     };
   }
 };
