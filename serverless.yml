@@ -50,6 +50,16 @@ functions:
             parameters:
               paths:
                 employeeId: true
+  createContract:
+    handler: src/handlers/createContract.handler
+    events:
+      - http:
+          path: /employees/{employeeId}/contracts
+          method: POST
+          request:
+            parameters:
+              paths:
+                employeeId: true
 
 resources:
   Resources:
