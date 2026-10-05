@@ -46,12 +46,24 @@
               "LogGroupName": "/aws/lambda/employee-creator-dev-deleteEmployee"
             }
           },
+          "CreateContractLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/employee-creator-dev-createContract"
+            }
+          },
+          "ViewEmployeeContractsLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/employee-creator-dev-viewEmployeeContracts"
+            }
+          },
           "CreateEmployeeLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
-                "S3Key": "serverless/employee-creator/dev/1790777995041-2026-09-30T14:19:55.041Z/employee-creator.zip"
+                "S3Key": "serverless/employee-creator/dev/1791210328951-2026-10-05T14:25:28.951Z/employee-creator.zip"
               },
               "Handler": "src/handlers/createEmployee.handler",
               "Runtime": "nodejs24.x",
@@ -77,7 +89,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
-                "S3Key": "serverless/employee-creator/dev/1790777995041-2026-09-30T14:19:55.041Z/employee-creator.zip"
+                "S3Key": "serverless/employee-creator/dev/1791210328951-2026-10-05T14:25:28.951Z/employee-creator.zip"
               },
               "Handler": "src/handlers/viewAllEmployees.handler",
               "Runtime": "nodejs24.x",
@@ -103,7 +115,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
-                "S3Key": "serverless/employee-creator/dev/1790777995041-2026-09-30T14:19:55.041Z/employee-creator.zip"
+                "S3Key": "serverless/employee-creator/dev/1791210328951-2026-10-05T14:25:28.951Z/employee-creator.zip"
               },
               "Handler": "src/handlers/viewEmployeeById.handler",
               "Runtime": "nodejs24.x",
@@ -129,7 +141,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
-                "S3Key": "serverless/employee-creator/dev/1790777995041-2026-09-30T14:19:55.041Z/employee-creator.zip"
+                "S3Key": "serverless/employee-creator/dev/1791210328951-2026-10-05T14:25:28.951Z/employee-creator.zip"
               },
               "Handler": "src/handlers/updateEmployee.handler",
               "Runtime": "nodejs24.x",
@@ -155,7 +167,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
-                "S3Key": "serverless/employee-creator/dev/1790777995041-2026-09-30T14:19:55.041Z/employee-creator.zip"
+                "S3Key": "serverless/employee-creator/dev/1791210328951-2026-10-05T14:25:28.951Z/employee-creator.zip"
               },
               "Handler": "src/handlers/deleteEmployee.handler",
               "Runtime": "nodejs24.x",
@@ -176,54 +188,126 @@
               "DeleteEmployeeLogGroup"
             ]
           },
-          "ViewAllEmployeesLambdaVersionO2zbiq32uit8rOjl54EQGrWShw9pG3BuqzkJaEt4CWg": {
+          "CreateContractLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
+                "S3Key": "serverless/employee-creator/dev/1791210328951-2026-10-05T14:25:28.951Z/employee-creator.zip"
+              },
+              "Handler": "src/handlers/createContract.handler",
+              "Runtime": "nodejs24.x",
+              "FunctionName": "employee-creator-dev-createContract",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Architectures": [
+                "arm64"
+              ],
+              "Environment": {
+                "Variables": {
+                  "NODE_OPTIONS": "--enable-source-maps"
+                }
+              },
+              "Role": "arn:aws:iam::656446902817:role/employee_creator"
+            },
+            "DependsOn": [
+              "CreateContractLogGroup"
+            ]
+          },
+          "ViewEmployeeContractsLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-ap-southeast-2-bf54e5c0-a82d",
+                "S3Key": "serverless/employee-creator/dev/1791210328951-2026-10-05T14:25:28.951Z/employee-creator.zip"
+              },
+              "Handler": "src/handlers/viewEmployeeContracts.handler",
+              "Runtime": "nodejs24.x",
+              "FunctionName": "employee-creator-dev-viewEmployeeContracts",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Architectures": [
+                "arm64"
+              ],
+              "Environment": {
+                "Variables": {
+                  "NODE_OPTIONS": "--enable-source-maps"
+                }
+              },
+              "Role": "arn:aws:iam::656446902817:role/employee_creator"
+            },
+            "DependsOn": [
+              "ViewEmployeeContractsLogGroup"
+            ]
+          },
+          "ViewAllEmployeesLambdaVersionIaInsNhUo71hCwJ08B8oHWE8auD5wxMmG3siAeMfUW8": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ViewAllEmployeesLambdaFunction"
               },
-              "CodeSha256": "fyd8EHHeMJTcZ6dhvV3oERUvZ5Hri0bcOkQ3Uje/d4E="
+              "CodeSha256": "EsfiloP+HQuiVLQ/K7uqvNuxVekF8Id9EJE/sLkedtk="
             }
           },
-          "ViewEmployeeByIdLambdaVersionWWTjhOz76Qir3vYH64cRAedb6e9kxdubsSga3S79Udg": {
-            "Type": "AWS::Lambda::Version",
-            "DeletionPolicy": "Retain",
-            "Properties": {
-              "FunctionName": {
-                "Ref": "ViewEmployeeByIdLambdaFunction"
-              },
-              "CodeSha256": "fyd8EHHeMJTcZ6dhvV3oERUvZ5Hri0bcOkQ3Uje/d4E="
-            }
-          },
-          "CreateEmployeeLambdaVersionGIc9ICgMJBJ0loc35CPhWgLVDwgLpYE7sk0TutWr2Q": {
+          "CreateEmployeeLambdaVersion24ok0RlO76YQ6SQwlFSWctaf7b9Eb5OQiWnhraQS6M": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateEmployeeLambdaFunction"
               },
-              "CodeSha256": "fyd8EHHeMJTcZ6dhvV3oERUvZ5Hri0bcOkQ3Uje/d4E="
+              "CodeSha256": "EsfiloP+HQuiVLQ/K7uqvNuxVekF8Id9EJE/sLkedtk="
             }
           },
-          "DeleteEmployeeLambdaVersioncOPHVGMDA6sL7FTI3QoqDQJqbdFZQulCn0m5AySbgs": {
-            "Type": "AWS::Lambda::Version",
-            "DeletionPolicy": "Retain",
-            "Properties": {
-              "FunctionName": {
-                "Ref": "DeleteEmployeeLambdaFunction"
-              },
-              "CodeSha256": "fyd8EHHeMJTcZ6dhvV3oERUvZ5Hri0bcOkQ3Uje/d4E="
-            }
-          },
-          "UpdateEmployeeLambdaVersion5e70jy5vfIkbjDCEIoGK8I8kiYHqyBkoQJRfrApIovM": {
+          "UpdateEmployeeLambdaVersion8PbmXMQHqCF7hBAI7y6iZdMLYxNWeoWAcCi11h7VQ": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "UpdateEmployeeLambdaFunction"
               },
-              "CodeSha256": "fyd8EHHeMJTcZ6dhvV3oERUvZ5Hri0bcOkQ3Uje/d4E="
+              "CodeSha256": "EsfiloP+HQuiVLQ/K7uqvNuxVekF8Id9EJE/sLkedtk="
+            }
+          },
+          "DeleteEmployeeLambdaVersionnAo4IKHwrqCfbiZb2GHw59kRT0JzeuvKoFeSTrMTU4": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "DeleteEmployeeLambdaFunction"
+              },
+              "CodeSha256": "EsfiloP+HQuiVLQ/K7uqvNuxVekF8Id9EJE/sLkedtk="
+            }
+          },
+          "ViewEmployeeByIdLambdaVersionlNodnpwOBHwXeXDyggdrAdNZkBTJJsMmtfKrqMNxrE": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ViewEmployeeByIdLambdaFunction"
+              },
+              "CodeSha256": "EsfiloP+HQuiVLQ/K7uqvNuxVekF8Id9EJE/sLkedtk="
+            }
+          },
+          "CreateContractLambdaVersionUfoqGxlQ638aPAM96RxxUraui5WKTj1LHR5PD3OQ": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CreateContractLambdaFunction"
+              },
+              "CodeSha256": "EsfiloP+HQuiVLQ/K7uqvNuxVekF8Id9EJE/sLkedtk="
+            }
+          },
+          "ViewEmployeeContractsLambdaVersionSwtkAhxHN3jI0kq2Fd7I7dHWNBeU0ZFFB50CjN4zOw": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ViewEmployeeContractsLambdaFunction"
+              },
+              "CodeSha256": "EsfiloP+HQuiVLQ/K7uqvNuxVekF8Id9EJE/sLkedtk="
             }
           },
           "ApiGatewayRestApi": {
@@ -260,6 +344,18 @@
                 "Ref": "ApiGatewayResourceEmployees"
               },
               "PathPart": "{employeeId}",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceEmployeesEmployeeidVarContracts": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceEmployeesEmployeeidVar"
+              },
+              "PathPart": "contracts",
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
@@ -513,6 +609,110 @@
               "DeleteEmployeeLambdaPermissionApiGateway"
             ]
           },
+          "ApiGatewayMethodEmployeesEmployeeidVarContractsPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {
+                "method.request.path.employeeId": true
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceEmployeesEmployeeidVarContracts"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "CreateContractLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                },
+                "RequestParameters": {}
+              },
+              "MethodResponses": [],
+              "RequestValidatorId": {
+                "Ref": "ApiGatewayEmployeecreatorRequestValidator"
+              }
+            },
+            "DependsOn": [
+              "CreateContractLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodEmployeesEmployeeidVarContractsGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {
+                "method.request.path.employeeId": true
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceEmployeesEmployeeidVarContracts"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "ViewEmployeeContractsLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                },
+                "RequestParameters": {}
+              },
+              "MethodResponses": [],
+              "RequestValidatorId": {
+                "Ref": "ApiGatewayEmployeecreatorRequestValidator"
+              }
+            },
+            "DependsOn": [
+              "ViewEmployeeContractsLambdaPermissionApiGateway"
+            ]
+          },
           "ApiGatewayEmployeecreatorRequestValidator": {
             "Type": "AWS::ApiGateway::RequestValidator",
             "Properties": {
@@ -524,7 +724,7 @@
               "Name": "employee-creator-dev | Validate request body and querystring parameters"
             }
           },
-          "ApiGatewayDeployment1790777980296": {
+          "ApiGatewayDeployment1791210312765": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -537,7 +737,9 @@
               "ApiGatewayMethodEmployeesGet",
               "ApiGatewayMethodEmployeesEmployeeidVarGet",
               "ApiGatewayMethodEmployeesEmployeeidVarPut",
-              "ApiGatewayMethodEmployeesEmployeeidVarDelete"
+              "ApiGatewayMethodEmployeesEmployeeidVarDelete",
+              "ApiGatewayMethodEmployeesEmployeeidVarContractsPost",
+              "ApiGatewayMethodEmployeesEmployeeidVarContractsGet"
             ]
           },
           "CreateEmployeeLambdaPermissionApiGateway": {
@@ -725,6 +927,80 @@
               }
             }
           },
+          "CreateContractLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CreateContractLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "ViewEmployeeContractsLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ViewEmployeeContractsLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
           "EmployeesTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
@@ -755,46 +1031,64 @@
           "ViewAllEmployeesLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ViewAllEmployeesLambdaVersionO2zbiq32uit8rOjl54EQGrWShw9pG3BuqzkJaEt4CWg"
+              "Ref": "ViewAllEmployeesLambdaVersionIaInsNhUo71hCwJ08B8oHWE8auD5wxMmG3siAeMfUW8"
             },
             "Export": {
               "Name": "sls-employee-creator-dev-ViewAllEmployeesLambdaFunctionQualifiedArn"
             }
           },
-          "ViewEmployeeByIdLambdaFunctionQualifiedArn": {
-            "Description": "Current Lambda function version",
-            "Value": {
-              "Ref": "ViewEmployeeByIdLambdaVersionWWTjhOz76Qir3vYH64cRAedb6e9kxdubsSga3S79Udg"
-            },
-            "Export": {
-              "Name": "sls-employee-creator-dev-ViewEmployeeByIdLambdaFunctionQualifiedArn"
-            }
-          },
           "CreateEmployeeLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateEmployeeLambdaVersionGIc9ICgMJBJ0loc35CPhWgLVDwgLpYE7sk0TutWr2Q"
+              "Ref": "CreateEmployeeLambdaVersion24ok0RlO76YQ6SQwlFSWctaf7b9Eb5OQiWnhraQS6M"
             },
             "Export": {
               "Name": "sls-employee-creator-dev-CreateEmployeeLambdaFunctionQualifiedArn"
             }
           },
+          "UpdateEmployeeLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "UpdateEmployeeLambdaVersion8PbmXMQHqCF7hBAI7y6iZdMLYxNWeoWAcCi11h7VQ"
+            },
+            "Export": {
+              "Name": "sls-employee-creator-dev-UpdateEmployeeLambdaFunctionQualifiedArn"
+            }
+          },
           "DeleteEmployeeLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "DeleteEmployeeLambdaVersioncOPHVGMDA6sL7FTI3QoqDQJqbdFZQulCn0m5AySbgs"
+              "Ref": "DeleteEmployeeLambdaVersionnAo4IKHwrqCfbiZb2GHw59kRT0JzeuvKoFeSTrMTU4"
             },
             "Export": {
               "Name": "sls-employee-creator-dev-DeleteEmployeeLambdaFunctionQualifiedArn"
             }
           },
-          "UpdateEmployeeLambdaFunctionQualifiedArn": {
+          "ViewEmployeeByIdLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "UpdateEmployeeLambdaVersion5e70jy5vfIkbjDCEIoGK8I8kiYHqyBkoQJRfrApIovM"
+              "Ref": "ViewEmployeeByIdLambdaVersionlNodnpwOBHwXeXDyggdrAdNZkBTJJsMmtfKrqMNxrE"
             },
             "Export": {
-              "Name": "sls-employee-creator-dev-UpdateEmployeeLambdaFunctionQualifiedArn"
+              "Name": "sls-employee-creator-dev-ViewEmployeeByIdLambdaFunctionQualifiedArn"
+            }
+          },
+          "CreateContractLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CreateContractLambdaVersionUfoqGxlQ638aPAM96RxxUraui5WKTj1LHR5PD3OQ"
+            },
+            "Export": {
+              "Name": "sls-employee-creator-dev-CreateContractLambdaFunctionQualifiedArn"
+            }
+          },
+          "ViewEmployeeContractsLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ViewEmployeeContractsLambdaVersionSwtkAhxHN3jI0kq2Fd7I7dHWNBeU0ZFFB50CjN4zOw"
+            },
+            "Export": {
+              "Name": "sls-employee-creator-dev-ViewEmployeeContractsLambdaFunctionQualifiedArn"
             }
           },
           "ServiceEndpoint": {
@@ -849,7 +1143,7 @@
         "timeout": 6,
         "runtime": "nodejs24.x",
         "vpc": {},
-        "versionLogicalId": "CreateEmployeeLambdaVersionGIc9ICgMJBJ0loc35CPhWgLVDwgLpYE7sk0TutWr2Q"
+        "versionLogicalId": "CreateEmployeeLambdaVersion24ok0RlO76YQ6SQwlFSWctaf7b9Eb5OQiWnhraQS6M"
       },
       "viewAllEmployees": {
         "handler": "src/handlers/viewAllEmployees.handler",
@@ -871,7 +1165,7 @@
         "timeout": 6,
         "runtime": "nodejs24.x",
         "vpc": {},
-        "versionLogicalId": "ViewAllEmployeesLambdaVersionO2zbiq32uit8rOjl54EQGrWShw9pG3BuqzkJaEt4CWg"
+        "versionLogicalId": "ViewAllEmployeesLambdaVersionIaInsNhUo71hCwJ08B8oHWE8auD5wxMmG3siAeMfUW8"
       },
       "viewEmployeeById": {
         "handler": "src/handlers/viewEmployeeById.handler",
@@ -898,7 +1192,7 @@
         "timeout": 6,
         "runtime": "nodejs24.x",
         "vpc": {},
-        "versionLogicalId": "ViewEmployeeByIdLambdaVersionWWTjhOz76Qir3vYH64cRAedb6e9kxdubsSga3S79Udg"
+        "versionLogicalId": "ViewEmployeeByIdLambdaVersionlNodnpwOBHwXeXDyggdrAdNZkBTJJsMmtfKrqMNxrE"
       },
       "updateEmployee": {
         "handler": "src/handlers/updateEmployee.handler",
@@ -925,7 +1219,7 @@
         "timeout": 6,
         "runtime": "nodejs24.x",
         "vpc": {},
-        "versionLogicalId": "UpdateEmployeeLambdaVersion5e70jy5vfIkbjDCEIoGK8I8kiYHqyBkoQJRfrApIovM"
+        "versionLogicalId": "UpdateEmployeeLambdaVersion8PbmXMQHqCF7hBAI7y6iZdMLYxNWeoWAcCi11h7VQ"
       },
       "deleteEmployee": {
         "handler": "src/handlers/deleteEmployee.handler",
@@ -952,7 +1246,61 @@
         "timeout": 6,
         "runtime": "nodejs24.x",
         "vpc": {},
-        "versionLogicalId": "DeleteEmployeeLambdaVersioncOPHVGMDA6sL7FTI3QoqDQJqbdFZQulCn0m5AySbgs"
+        "versionLogicalId": "DeleteEmployeeLambdaVersionnAo4IKHwrqCfbiZb2GHw59kRT0JzeuvKoFeSTrMTU4"
+      },
+      "createContract": {
+        "handler": "src/handlers/createContract.handler",
+        "events": [
+          {
+            "http": {
+              "path": "employees/{employeeId}/contracts",
+              "method": "post",
+              "request": {
+                "parameters": {
+                  "method.request.path.employeeId": true
+                }
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "employee-creator-dev-createContract",
+        "environment": {
+          "NODE_OPTIONS": "--enable-source-maps"
+        },
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs24.x",
+        "vpc": {},
+        "versionLogicalId": "CreateContractLambdaVersionUfoqGxlQ638aPAM96RxxUraui5WKTj1LHR5PD3OQ"
+      },
+      "viewEmployeeContracts": {
+        "handler": "src/handlers/viewEmployeeContracts.handler",
+        "events": [
+          {
+            "http": {
+              "path": "employees/{employeeId}/contracts",
+              "method": "get",
+              "request": {
+                "parameters": {
+                  "method.request.path.employeeId": true
+                }
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "employee-creator-dev-viewEmployeeContracts",
+        "environment": {
+          "NODE_OPTIONS": "--enable-source-maps"
+        },
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs24.x",
+        "vpc": {},
+        "versionLogicalId": "ViewEmployeeContractsLambdaVersionSwtkAhxHN3jI0kq2Fd7I7dHWNBeU0ZFFB50CjN4zOw"
       }
     },
     "resources": {
@@ -998,7 +1346,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/employee-creator/dev/1790777995041-2026-09-30T14:19:55.041Z",
+    "artifactDirectoryName": "serverless/employee-creator/dev/1791210328951-2026-10-05T14:25:28.951Z",
     "artifact": "employee-creator.zip"
   }
 }

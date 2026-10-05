@@ -60,6 +60,16 @@ functions:
             parameters:
               paths:
                 employeeId: true
+  viewEmployeeContracts:
+    handler: src/handlers/viewEmployeeContracts.handler
+    events:
+      - http:
+          path: /employees/{employeeId}/contracts
+          method: GET
+          request:
+            parameters:
+              paths:
+                employeeId: true
 
 resources:
   Resources:

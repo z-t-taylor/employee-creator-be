@@ -2,11 +2,11 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
   GetCommand,
-  PutCommand,
+  QueryCommand,
 } from "@aws-sdk/lib-dynamodb";
 import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { randomUUID } from "crypto";
 import { Contract } from "../types/contracts";
+import { Employee } from "../types/employee";
 
 const employeeTable = "employees";
 const contractTable = "contracts";
@@ -30,60 +30,30 @@ export const handler = async (
       new GetCommand({ TableName: employeeTable, Key: { employeeId } }),
     );
 
-    if (!getEmployee) {
+    const employee = getEmployee.Item as Employee | undefined;
+
+    if (!employee) {
       return {
         statusCode: 404,
         body: JSON.stringify({ message: "Employee not found" }),
       };
     }
 
-    if (!event.body) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ message: "Missing request body" }),
-      };
-    }
-
-    const { type, status, startDate, endDate, salary, hoursPerWeek } =
-      JSON.parse(event.body);
-
-    if (
-      !type ||
-      !status ||
-      !startDate ||
-      salary === undefined ||
-      hoursPerWeek === undefined
-    ) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({
-          message:
-            "type, status, startDate, salary, and hoursPerWeek are required",
-        }),
-      };
-    }
-
-    const now = new Date().toISOString();
-    const contract: Contract = {
-      employeeId,
-      contractId: `contract-${randomUUID()}`,
-      type,
-      status,
-      startDate,
-      endDate: endDate ?? null,
-      salary,
-      hoursPerWeek,
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    await dynamo.send(
-      new PutCommand({ TableName: contractTable, Item: contract }),
+    const queryRes = await dynamo.send(
+      new QueryCommand({
+        TableName: contractTable,
+        KeyConditionExpression: "employeeId = :employeeId",
+        ExpressionAttributeValues: {
+          ":employeeId": employeeId,
+        },
+      }),
     );
 
+    const contracts: Contract[] = (queryRes.Items as Contract[]) ?? [];
+
     return {
-      statusCode: 201,
-      body: JSON.stringify({ message: "New contract added", data: contract }),
+      statusCode: 200,
+      body: JSON.stringify({ data: contracts }),
     };
   } catch (err) {
     console.error("Error: ", err);
