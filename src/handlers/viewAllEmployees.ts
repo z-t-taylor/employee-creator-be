@@ -2,6 +2,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { Employee } from "../types/employee";
+import { corsHeaders } from "../utils/headers";
 
 const tableName = "employees";
 const client = new DynamoDBClient({});
@@ -17,12 +18,14 @@ export const handler = async (
 
     return {
       statusCode: 200,
+      headers: corsHeaders,
       body: JSON.stringify({ message: "Employees retrieved", data: employees }),
     };
   } catch (err) {
     console.error("Error: ", err);
     return {
       statusCode: 500,
+      headers: corsHeaders,
       body: JSON.stringify({ message: "Something went wrong.." }),
     };
   }

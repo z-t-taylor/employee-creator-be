@@ -6,6 +6,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { Employee } from "../types/employee";
+import { corsHeaders } from "../utils/headers";
 
 const tableName = "employees";
 const client = new DynamoDBClient({});
@@ -20,6 +21,7 @@ export const handler = async (
     if (!employeeId) {
       return {
         statusCode: 400,
+        headers: corsHeaders,
         body: JSON.stringify({ message: "Missing employee ID" }),
       };
     }
@@ -33,6 +35,7 @@ export const handler = async (
     if (!employee) {
       return {
         statusCode: 404,
+        headers: corsHeaders,
         body: JSON.stringify({ message: "Employee not found" }),
       };
     }
@@ -43,12 +46,14 @@ export const handler = async (
 
     return {
       statusCode: 200,
+      headers: corsHeaders,
       body: JSON.stringify({ message: "Employee deleted" }),
     };
   } catch (err) {
     console.error("Error: ", err);
     return {
       statusCode: 500,
+      headers: corsHeaders,
       body: JSON.stringify({ message: "Something went wrong.." }),
     };
   }

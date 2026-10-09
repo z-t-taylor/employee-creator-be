@@ -7,6 +7,7 @@ import {
 import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { randomUUID } from "crypto";
 import { Contract } from "../types/contracts";
+import { corsHeaders } from "../utils/headers";
 
 const employeeTable = "employees";
 const contractTable = "contracts";
@@ -22,6 +23,7 @@ export const handler = async (
     if (!employeeId) {
       return {
         statusCode: 400,
+        headers: corsHeaders,
         body: JSON.stringify({ message: "Missing employee ID" }),
       };
     }
@@ -33,6 +35,7 @@ export const handler = async (
     if (!getEmployee) {
       return {
         statusCode: 404,
+        headers: corsHeaders,
         body: JSON.stringify({ message: "Employee not found" }),
       };
     }
@@ -40,6 +43,7 @@ export const handler = async (
     if (!event.body) {
       return {
         statusCode: 400,
+        headers: corsHeaders,
         body: JSON.stringify({ message: "Missing request body" }),
       };
     }
@@ -56,6 +60,7 @@ export const handler = async (
     ) {
       return {
         statusCode: 400,
+        headers: corsHeaders,
         body: JSON.stringify({
           message:
             "type, status, startDate, salary, and hoursPerWeek are required",
@@ -83,12 +88,14 @@ export const handler = async (
 
     return {
       statusCode: 201,
+      headers: corsHeaders,
       body: JSON.stringify({ message: "New contract added", data: contract }),
     };
   } catch (err) {
     console.error("Error: ", err);
     return {
       statusCode: 500,
+      headers: corsHeaders,
       body: JSON.stringify({ message: "Something went wrong.." }),
     };
   }

@@ -3,6 +3,7 @@ import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { randomUUID } from "crypto";
 import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { Employee } from "../types/employee";
+import { corsHeaders } from "../utils/headers";
 
 const tableName = "employees";
 const client = new DynamoDBClient({});
@@ -15,6 +16,7 @@ export const handler = async (
     if (!event.body) {
       return {
         statusCode: 400,
+        headers: corsHeaders,
         body: JSON.stringify({ message: "Missing request body" }),
       };
     }
@@ -26,6 +28,7 @@ export const handler = async (
     if (!firstName || !lastName || !email || !jobTitle || !department) {
       return {
         statusCode: 400,
+        headers: corsHeaders,
         body: JSON.stringify({
           message:
             "All input fields are required, please provide the necessary details",
@@ -50,12 +53,14 @@ export const handler = async (
 
     return {
       statusCode: 201,
+      headers: corsHeaders,
       body: JSON.stringify({ message: "New employee created", data: employee }),
     };
   } catch (err) {
     console.error("Error: ", err);
     return {
       statusCode: 500,
+      headers: corsHeaders,
       body: JSON.stringify({ message: "Something went wrong.." }),
     };
   }
